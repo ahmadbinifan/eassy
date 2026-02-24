@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EASSY - Employee Administration Services System</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #0a1628;
+      --bg-secondary: #111d32;
+      --fg-primary: #f1f5f9;
+      --fg-secondary: #94a3b8;
+      --accent: #14b8a6;
+      --accent-glow: rgba(20, 184, 166, 0.3);
+      --card-bg: rgba(17, 29, 50, 0.7);
+      --border: rgba(148, 163, 184, 0.1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--bg-primary);
+      color: var(--fg-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .font-display {
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    /* Background Grid Pattern */
+    .bg-grid {
+      background-image: 
+        linear-gradient(rgba(20, 184, 166, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(20, 184, 166, 0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+
+    /* Gradient Orbs */
+    .gradient-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    .orb-1 {
+      width: 400px;
+      height: 400px;
+      background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
+      top: -100px;
+      right: -100px;
+      animation: float 15s ease-in-out infinite;
+    }
+
+    .orb-2 {
+      width: 300px;
+      height: 300px;
+      background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
+      bottom: 20%;
+      left: -100px;
+      animation: float 18s ease-in-out infinite reverse;
+    }
+
+    .orb-3 {
+      width: 200px;
+      height: 200px;
+      background: linear-gradient(135deg, #14b8a6 0%, #0891b2 100%);
+      bottom: 10%;
+      right: 20%;
+      animation: float 12s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      25% { transform: translate(30px, -20px) scale(1.05); }
+      50% { transform: translate(-20px, 30px) scale(0.95); }
+      75% { transform: translate(-30px, -10px) scale(1.02); }
+    }
+
+    /* Entrance Animations */
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-4 { transition-delay: 0.4s; }
+    .reveal-delay-5 { transition-delay: 0.5s; }
+    .reveal-delay-6 { transition-delay: 0.6s; }
+    .reveal-delay-7 { transition-delay: 0.7s; }
+    .reveal-delay-8 { transition-delay: 0.8s; }
+
+    /* Logo Animation */
+    .logo-container {
+      position: relative;
+    }
+
+    .logo-glow {
+      position: absolute;
+      inset: -20px;
+      background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+
+    .logo-container:hover .logo-glow {
+      opacity: 1;
+    }
+
+    /* Module Cards */
+    .module-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      backdrop-filter: blur(10px);
+    }
+
+    .module-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent), #0891b2);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .module-card:hover::before {
+      transform: scaleX(1);
+    }
+
+    .module-card:hover {
+      transform: translateY(-8px);
+      border-color: rgba(20, 184, 166, 0.3);
+      box-shadow: 
+        0 20px 40px -10px rgba(0, 0, 0, 0.4),
+        0 0 30px -5px var(--accent-glow);
+    }
+
+    .module-card:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 4px;
+    }
+
+    .module-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      transition: all 0.4s ease;
+    }
+
+    .module-card:hover .module-icon {
+      transform: scale(1.1);
+    }
+
+    .icon-arrow {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      opacity: 0;
+      transform: translateX(-10px);
+      transition: all 0.3s ease;
+    }
+
+    .module-card:hover .icon-arrow {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    /* Particle System */
+    .particle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: var(--accent);
+      border-radius: 50%;
+      pointer-events: none;
+      opacity: 0;
+    }
+
+    /* Stats Counter */
+    .stat-number {
+      font-size: 2.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--fg-primary), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* Navigation */
+    .nav-link {
+      position: relative;
+      color: var(--fg-secondary);
+      transition: color 0.3s ease;
+    }
+
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--accent);
+      transition: width 0.3s ease;
+    }
+
+    .nav-link:hover {
+      color: var(--fg-primary);
+    }
+
+    .nav-link:hover::after {
+      width: 100%;
+    }
+
+    /* Status Indicator */
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background: #22c55e;
+      border-radius: 50%;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.2); }
+    }
+
+    /* Button Styles */
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), #0891b2);
+      color: white;
+      padding: 14px 32px;
+      border-radius: 10px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, #0d9488, #0e7490);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .btn-primary:hover::before {
+      opacity: 1;
+    }
+
+    .btn-primary span {
+      position: relative;
+      z-index: 1;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px -10px var(--accent-glow);
+    }
+
+    /* Reduced Motion */
+    @media (prefers-reduced-motion: reduce) {
+      .reveal {
+        opacity: 1;
+        transform: none;
+        transition: none;
+      }
+      
+      .gradient-orb,
+      .status-dot {
+        animation: none;
+      }
+      
+      .module-card:hover {
+        transform: none;
+      }
+    }
+
+    /* Mobile Adjustments */
+    @media (max-width: 640px) {
+      .stat-number {
+        font-size: 1.75rem;
+      }
+      
+      .module-card {
+        padding: 20px;
+      }
+      
+      .module-icon {
+        width: 48px;
+        height: 48px;
+      }
+    }
+  </style>
+</head>
+<body class="bg-grid">
+  <!-- Gradient Orbs -->
+  <div class="gradient-orb orb-1"></div>
+  <div class="gradient-orb orb-2"></div>
+  <div class="gradient-orb orb-3"></div>
+
+  <!-- Navigation -->
+  <nav class="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-opacity-80" style="background: rgba(10, 22, 40, 0.9);">
+    <div class="max-w-7xl mx-auto px-6 py-4">
+      <div class="flex items-center justify-between">
+        <div class="logo-container flex items-center gap-3">
+          <div class="logo-glow"></div>
+          <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-teal-500 to-cyan-600 flex items-center justify-center">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+              <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+          </div>
+          <span class="font-display font-bold text-xl tracking-tight">EASSY</span>
+        </div>
+        
+        <div class="hidden md:flex items-center gap-8">
+          <a href="#modules" class="nav-link text-sm font-medium">Modul</a>
+          <a href="#stats" class="nav-link text-sm font-medium">Statistik</a>
+          <a href="#" class="nav-link text-sm font-medium">Dokumentasi</a>
+          <a href="#" class="nav-link text-sm font-medium">Bantuan</a>
+        </div>
+
+        <div class="flex items-center gap-4">
+          <div class="flex items-center gap-2 text-sm">
+            <div class="status-dot"></div>
+            <span class="text-green-400 font-medium">Online</span>
+          </div>
+          <button class="btn-primary text-sm" onclick="handleLogin()">
+            <span>Masuk</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="min-h-screen flex items-center justify-center px-6 pt-20">
+    <div class="max-w-5xl mx-auto text-center">
+      <!-- Badge -->
+      
+      <!-- Main Title -->
+      <h1 class="reveal reveal-delay-1 font-display text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-6">
+        <span class="block">EASSY</span>
+      </h1>
+
+      <!-- Subtitle -->
+      <p class="reveal reveal-delay-2 text-xl md:text-2xl font-light text-slate-400 mb-4">
+        Employee Administration Services System
+      </p>
+
+      <!-- Description -->
+      <p class="reveal reveal-delay-3 text-base md:text-lg text-slate-500 max-w-2xl mx-auto mb-12 leading-relaxed">
+        Platform terintegrasi untuk mengelola seluruh aspek administrasi karyawan. 
+        Dari data kepegawaian hingga penggajian, semua dalam satu sistem yang efisien dan aman.
+      </p>
+
+      <!-- CTA Buttons -->
+      <div class="reveal reveal-delay-4 flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
+        <button class="btn-primary text-base" onclick="scrollToModules()">
+          <span>Jelajahi Modul</span>
+        </button>
+        <button class="px-8 py-3.5 rounded-lg border border-slate-600 text-slate-300 font-medium hover:border-teal-500/50 hover:text-teal-400 transition-all duration-300">
+          Lihat Demo
+        </button>
+      </div>
+
+      <!-- Scroll Indicator -->
+      <div class="reveal reveal-delay-5 flex flex-col items-center gap-2 opacity-60">
+        <span class="text-xs text-slate-500 uppercase tracking-widest">Scroll</span>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-slate-500 animate-bounce">
+          <path d="M12 5v14M5 12l7 7 7-7"/>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats Section -->
+  <section id="stats" class="py-20 px-6">
+    <div class="max-w-6xl mx-auto">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+        <div class="reveal text-center">
+          <div class="stat-number" data-target="8">0</div>
+          <div class="text-slate-500 text-sm mt-2">Modul Aktif</div>
+        </div>
+        <div class="reveal reveal-delay-1 text-center">
+          <div class="stat-number" data-target="500">0</div>
+          <div class="text-slate-500 text-sm mt-2">Pengguna</div>
+        </div>
+        <div class="reveal reveal-delay-2 text-center">
+          <div class="stat-number" data-target="99">0</div>
+          <div class="text-slate-500 text-sm mt-2">% Uptime</div>
+        </div>
+        <div class="reveal reveal-delay-3 text-center">
+          <div class="stat-number" data-target="24">0</div>
+          <div class="text-slate-500 text-sm mt-2">Jam Support</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Modules Section -->
+  <section id="modules" class="py-20 px-6">
+    <div class="max-w-6xl mx-auto">
+      <!-- Section Header -->
+      <div class="text-center mb-16">
+        <h2 class="reveal font-display text-3xl md:text-4xl font-bold mb-4">Modul Sistem</h2>
+        <p class="reveal reveal-delay-1 text-slate-500 max-w-xl mx-auto">
+          Pilih modul yang sesuai dengan kebutuhan administrasi karyawan Anda
+        </p>
+      </div>
+
+      <!-- Module Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" id="moduleGrid">
+        <!-- Modules will be rendered by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="py-12 px-6 border-t border-slate-800/50">
+    <div class="max-w-6xl mx-auto">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-teal-500 to-cyan-600 flex items-center justify-center">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+              <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+          </div>
+          <span class="font-display font-bold">EASSY</span>
+        </div>
+        <p class="text-slate-600 text-sm">
+          2025 Employee Administration Services System. All rights reserved.
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Particle Container -->
+  <div id="particleContainer" class="fixed inset-0 pointer-events-none z-40"></div>
+
+  <script>
+    // Module Data
+    const modules = [
+      {
+        id: 'employee-data',
+        title: 'Data Karyawan',
+        description: 'Kelola data kepegawaian, riwayat jabatan, dan dokumen karyawan secara terpusat.',
+        icon: 'users',
+        color: '#14b8a6',
+        bgColor: 'rgba(20, 184, 166, 0.15)',
+        url: '#employee-data'
+      },
+      {
+        id: 'attendance',
+        title: 'Absensi & Cuti',
+        description: 'Sistem pencatatan kehadiran real-time dan pengajuan cuti digital.',
+        icon: 'calendar',
+        color: '#f59e0b',
+        bgColor: 'rgba(245, 158, 11, 0.15)',
+        url: '#attendance'
+      },
+      {
+        id: 'payroll',
+        title: 'Penggajian',
+        description: 'Kalkulasi gaji otomatis, slip gaji digital, dan manajemen tunjangan.',
+        icon: 'wallet',
+        color: '#8b5cf6',
+        bgColor: 'rgba(139, 92, 246, 0.15)',
+        url: '#payroll'
+      },
+      {
+        id: 'performance',
+        title: 'Evaluasi Kinerja',
+        description: 'Penilaian kinerja berkala, feedback, dan tracking goal karyawan.',
+        icon: 'chart',
+        color: '#ec4899',
+        bgColor: 'rgba(236, 72, 153, 0.15)',
+        url: '#performance'
+      },
+      {
+        id: 'recruitment',
+        title: 'Rekrutmen',
+        description: 'Kelola lowongan, pelamar, dan proses seleksi kandidat secara terintegrasi.',
+        icon: 'briefcase',
+        color: '#3b82f6',
+        bgColor: 'rgba(59, 130, 246, 0.15)',
+        url: '#recruitment'
+      },
+      {
+        id: 'training',
+        title: 'Pelatihan',
+        description: 'Jadwal pelatihan, pendaftaran, dan tracking sertifikasi karyawan.',
+        icon: 'book',
+        color: '#10b981',
+        bgColor: 'rgba(16, 185, 129, 0.15)',
+        url: '#training'
+      },
+      {
+        id: 'reports',
+        title: 'Laporan & Analitik',
+        description: 'Dashboard insight, laporan kepegawaian, dan export data komprehensif.',
+        icon: 'file',
+        color: '#06b6d4',
+        bgColor: 'rgba(6, 182, 212, 0.15)',
+        url: '#reports'
+      },
+      {
+        id: 'settings',
+        title: 'Pengaturan',
+        description: 'Konfigurasi sistem, manajemen pengguna, dan pengaturan hak akses.',
+        icon: 'settings',
+        color: '#64748b',
+        bgColor: 'rgba(100, 116, 139, 0.15)',
+        url: '#settings'
+      }
+    ];
+
+    // Icon SVGs
+    const icons = {
+      users: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+      calendar: '<rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>',
+      wallet: '<path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/>',
+      chart: '<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>',
+      briefcase: '<rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>',
+      book: '<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>',
+      file: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>',
+      settings: '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>'
+    };
+
+    // Render Modules
+    function renderModules() {
+      const grid = document.getElementById('moduleGrid');
+      
+      modules.forEach((module, index) => {
+        const card = document.createElement('a');
+        card.href = module.url;
+        card.className = `module-card reveal reveal-delay-${(index % 4) + 1}`;
+        card.setAttribute('role', 'button');
+        card.setAttribute('tabindex', '0');
+        card.setAttribute('aria-label', `Buka modul ${module.title}`);
+        
+        card.innerHTML = `
+          <div class="module-icon" style="background: ${module.bgColor};">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="${module.color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              ${icons[module.icon]}
+            </svg>
+          </div>
+          <div class="icon-arrow">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${module.color}" stroke-width="2">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </div>
+          <h3 class="font-display font-semibold text-lg mb-2">${module.title}</h3>
+          <p class="text-slate-500 text-sm leading-relaxed">${module.description}</p>
+        `;
+
+        // Add click event
+        card.addEventListener('click', (e) => {
+          e.preventDefault();
+          handleModuleClick(module);
+        });
+
+        // Add keyboard support
+        card.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            handleModuleClick(module);
+          }
+        });
+
+        // Add mouse move effect
+        card.addEventListener('mousemove', (e) => {
+          const rect = card.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          
+          card.style.setProperty('--mouse-x', `${x}px`);
+          card.style.setProperty('--mouse-y', `${y}px`);
+        });
+
+        grid.appendChild(card);
+      });
+    }
+
+    // Handle module click
+    function handleModuleClick(module) {
+      // Create ripple effect
+      createParticles(event.clientX, event.clientY);
+      
+      // Show notification
+      showNotification(`Membuka modul ${module.title}...`);
+      
+      // Simulate redirect (in real app, this would navigate)
+      setTimeout(() => {
+        console.log(`Navigating to: ${module.url}`);
+        // window.location.href = module.url;
+      }, 300);
+    }
+
+    // Particle System
+    function createParticles(x, y) {
+      const container = document.getElementById('particleContainer');
+      const particleCount = 12;
+      
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = `${x}px`;
+        particle.style.top = `${y}px`;
+        
+        const angle = (i / particleCount) * Math.PI * 2;
+        const velocity = 50 + Math.random() * 50;
+        const size = 3 + Math.random() * 4;
+        
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        
+        container.appendChild(particle);
+        
+        // Animate particle
+        particle.animate([
+          { opacity: 1, transform: 'translate(0, 0) scale(1)' },
+          { opacity: 0, transform: `translate(${Math.cos(angle) * velocity}px, ${Math.sin(angle) * velocity}px) scale(0)` }
+        ], {
+          duration: 600,
+          easing: 'cubic-bezier(0, 0.5, 0.5, 1)'
+        }).onfinish = () => particle.remove();
+      }
+    }
+
+    // Notification
+    function showNotification(message) {
+      const existing = document.querySelector('.notification');
+      if (existing) existing.remove();
+
+      const notification = document.createElement('div');
+      notification.className = 'notification';
+      notification.style.cssText = `
+        position: fixed;
+        bottom: 24px;
+        left: 50%;
+        transform: translateX(-50%) translateY(100px);
+        background: rgba(17, 29, 50, 0.95);
+        border: 1px solid rgba(20, 184, 166, 0.3);
+        padding: 16px 24px;
+        border-radius: 12px;
+        color: var(--fg-primary);
+        font-size: 14px;
+        font-weight: 500;
+        z-index: 100;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+      `;
+      notification.textContent = message;
+      document.body.appendChild(notification);
+
+      // Animate in
+      notification.animate([
+        { transform: 'translateX(-50%) translateY(100px)', opacity: 0 },
+        { transform: 'translateX(-50%) translateY(0)', opacity: 1 }
+      ], {
+        duration: 400,
+        easing: 'cubic-bezier(0.16, 1, 0.3, 1)'
+      });
+
+      // Remove after delay
+      setTimeout(() => {
+        notification.animate([
+          { transform: 'translateX(-50%) translateY(0)', opacity: 1 },
+          { transform: 'translateX(-50%) translateY(20px)', opacity: 0 }
+        ], {
+          duration: 300,
+          easing: 'ease-in'
+        }).onfinish = () => notification.remove();
+      }, 2000);
+    }
+
+    // Scroll Reveal Observer
+    function initScrollReveal() {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            
+            // Animate stat numbers
+            if (entry.target.querySelector('.stat-number')) {
+              animateNumber(entry.target.querySelector('.stat-number'));
+            }
+          }
+        });
+      }, {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+      });
+
+      document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    }
+
+    // Animate Numbers
+    function animateNumber(element) {
+      if (element.dataset.animated) return;
+      element.dataset.animated = 'true';
+      
+      const target = parseInt(element.dataset.target);
+      const duration = 2000;
+      const start = performance.now();
+      
+      function update(currentTime) {
+        const elapsed = currentTime - start;
+        const progress = Math.min(elapsed / duration, 1);
+        
+        // Easing function
+        const easeOut = 1 - Math.pow(1 - progress, 3);
+        const current = Math.round(target * easeOut);
+        
+        element.textContent = current;
+        
+        if (progress < 1) {
+          requestAnimationFrame(update);
+        }
+      }
+      
+      requestAnimationFrame(update);
+    }
+
+    // Scroll to modules
+    function scrollToModules() {
+      document.getElementById('modules').scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+
+    // Handle Login
+    function handleLogin() {
+      showNotification('Mengarahkan ke halaman login...');
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      renderModules();
+      initScrollReveal();
+      
+      // Initial reveal for hero elements
+      setTimeout(() => {
+        document.querySelectorAll('.reveal').forEach(el => {
+          if (el.getBoundingClientRect().top < window.innerHeight) {
+            el.classList.add('visible');
+          }
+        });
+      }, 100);
+    });
+
+    // Smooth scroll for nav links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        const href = this.getAttribute('href');
+        if (href !== '#') {
+          e.preventDefault();
+          const target = document.querySelector(href);
+          if (target) {
+            target.scrollIntoView({ behavior: 'smooth' });
+          }
+        }
+      });
+    });
+  </script>
+</body>
+</html>
